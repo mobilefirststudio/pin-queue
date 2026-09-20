@@ -30,6 +30,10 @@
     --color-etsy-fg: #B14A0B;
     --color-payhip-bg: #1C2333;
     --color-payhip-fg: #FFFFFF;
+    --color-draft-bg: #FBEEDA;
+    --color-draft-fg: #92600C;
+    --color-live-bg: #E4F5E8;
+    --color-live-fg: #217A38;
     --shadow: 0 1px 2px rgba(28,35,51,0.06), 0 1px 1px rgba(28,35,51,0.04);
   }
   @media (prefers-color-scheme: dark){
@@ -49,6 +53,10 @@
       --color-etsy-fg: #FFB37A;
       --color-payhip-bg: #F1F2F5;
       --color-payhip-fg: #1C2333;
+      --color-draft-bg: #34260F;
+      --color-draft-fg: #E2A34E;
+      --color-live-bg: #1B2E20;
+      --color-live-fg: #55C46E;
       --shadow: 0 1px 2px rgba(0,0,0,0.4);
     }
   }
@@ -68,6 +76,10 @@
     --color-etsy-fg: #FFB37A;
     --color-payhip-bg: #F1F2F5;
     --color-payhip-fg: #1C2333;
+    --color-draft-bg: #34260F;
+    --color-draft-fg: #E2A34E;
+    --color-live-bg: #1B2E20;
+    --color-live-fg: #55C46E;
     --shadow: 0 1px 2px rgba(0,0,0,0.4);
   }
 
@@ -81,7 +93,7 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
   .shell{
-    max-width: 880px;
+    max-width: 900px;
     margin: 0 auto;
     padding-inline: 20px;
     padding-block: calc(env(safe-area-inset-top) + 20px) 64px;
@@ -114,6 +126,13 @@
   }
   .header .today .date{ display:block; font-weight:600; color: var(--color-ink); }
 
+  .tabs{ display: flex; gap: 8px; flex-wrap: wrap; }
+  .tab-btn{
+    font-size: 13px; font-weight: 700; padding: 8px 16px; border-radius: 999px;
+    border: 1px solid var(--color-border); background: var(--color-paper); color: var(--color-muted); cursor: pointer;
+  }
+  .tab-btn.active{ background: var(--color-signal); border-color: var(--color-signal); color: white; }
+
   .stat-grid{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -129,6 +148,7 @@
     flex-direction: column;
     gap: 4px;
   }
+  .stat-tile.highlight{ border-color: var(--color-tack); }
   .stat-tile .num{ font-family: "IBM Plex Mono", monospace; font-size: 24px; font-weight: 500; }
   .stat-tile .label{ font-size: 12px; color: var(--color-muted); }
 
@@ -145,30 +165,6 @@
   .section-head{ display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
   .section-head h2{ font-size: 19px; }
   .section-head .sub{ font-size: 13px; color: var(--color-muted); }
-
-  .banner{
-    background: var(--color-signal-soft);
-    border: 1px solid var(--color-signal);
-    border-radius: 10px;
-    padding: 14px 16px;
-    font-size: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .banner strong{ display:block; margin-bottom: 2px; }
-  .banner a.cta{
-    white-space: nowrap;
-    font-weight: 600;
-    text-decoration: none;
-    background: var(--color-signal);
-    color: white;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-  }
 
   .queue-grid{
     display: grid;
@@ -197,10 +193,21 @@
   .chip.muted{ background: var(--color-border); color: var(--color-muted); }
   .chip.etsy{ background: var(--color-etsy-bg); color: var(--color-etsy-fg); }
   .chip.payhip{ background: var(--color-payhip-bg); color: var(--color-payhip-fg); }
+  .chip.draft{ background: var(--color-draft-bg); color: var(--color-draft-fg); }
+  .chip.live{ background: var(--color-live-bg); color: var(--color-live-fg); }
   .chip.clickable{ cursor: pointer; border: none; font-family: inherit; }
   .chip.clickable:focus-visible{ outline: 2px solid var(--color-signal); outline-offset: 1px; }
   .pin-card .meta{ font-size: 12px; color: var(--color-muted); font-family: "IBM Plex Mono", monospace; }
-  .pin-card .actions{ display: flex; gap: 8px; margin-top: auto; }
+  .pin-card .actions{ display: flex; gap: 8px; margin-top: auto; flex-wrap: wrap; }
+  .pin-card .desc-box{
+    font-size: 13px; line-height: 1.5; color: var(--color-ink);
+    background: var(--color-paper); border: 1px solid var(--color-border); border-radius: 8px;
+    padding: 10px; max-height: 140px; overflow-y: auto;
+  }
+  .pin-card .desc-label-row{ display:flex; justify-content: space-between; align-items:center; gap: 8px; }
+  .pin-card .desc-label-row .lbl{ font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--color-muted); font-weight: 700; }
+  .pin-card .tags-row{ display:flex; flex-direction: column; gap: 4px; }
+  .pin-card input.tags-input{ font-size: 13px; }
 
   .empty-note{ font-size: 13px; color: var(--color-muted); font-style: italic; }
 
@@ -225,9 +232,10 @@
     outline: 2px solid var(--color-signal); outline-offset: 1px;
   }
   button.primary{
-    background: var(--color-signal); border-color: var(--color-signal); color: white; flex: 1;
+    background: var(--color-signal); border-color: var(--color-signal); color: white;
   }
   button.primary:hover{ filter: brightness(1.08); }
+  button.small{ font-size: 12px; padding: 6px 10px; }
   button.danger{ color: #B4293B; }
   button.danger.confirming{ background: #B4293B; color: white; border-color: #B4293B; }
   button:disabled{ opacity: 0.5; cursor: not-allowed; }
@@ -244,7 +252,8 @@
     background: var(--color-cloud);
     color: var(--color-ink);
   }
-  textarea{ min-height: 90px; resize: vertical; font-family: "IBM Plex Mono", monospace; font-size: 13px; }
+  textarea{ min-height: 70px; resize: vertical; font-size: 13px; }
+  textarea.mono-area{ font-family: "IBM Plex Mono", monospace; }
   .field{ display: flex; flex-direction: column; gap: 2px; }
   .form-row{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   @media (max-width: 520px){
@@ -280,6 +289,8 @@
   }
   .dest-toggle.on.etsy{ background: var(--color-etsy-bg); border-color: var(--color-etsy-fg); color: var(--color-etsy-fg); }
   .dest-toggle.on.payhip{ background: var(--color-payhip-bg); border-color: var(--color-payhip-bg); color: var(--color-payhip-fg); }
+  .dest-toggle.on.draft{ background: var(--color-draft-bg); border-color: var(--color-draft-fg); color: var(--color-draft-fg); }
+  .dest-toggle.on.live{ background: var(--color-live-bg); border-color: var(--color-live-fg); color: var(--color-live-fg); }
 
   details.subsection{ border-top: 1px solid var(--color-border); padding-top: 14px; }
   details.subsection summary{ cursor: pointer; font-weight: 600; font-size: 13px; color: var(--color-muted); list-style: none; }
@@ -301,8 +312,10 @@
   td{ padding: 10px; border-bottom: 1px solid var(--color-border); vertical-align: top; }
   tr:last-child td{ border-bottom: none; }
   td.title-cell{ font-weight: 600; max-width: 220px; }
-  td .link-line{ font-size: 12px; margin-top: 2px; }
+  td .link-line{ font-size: 12px; margin-top: 2px; font-weight: 400; }
+  td .desc-line{ font-size: 12px; margin-top: 4px; font-weight: 400; color: var(--color-muted); max-width: 260px; }
   td.num{ font-family: "IBM Plex Mono", monospace; text-align: right; white-space: nowrap; }
+  td input.tags-input{ font-size: 12px; padding: 6px 8px; min-width: 120px; }
   .status-dot{ display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
   .status-dot.fresh{ background: var(--color-board); }
   .status-dot.due{ background: var(--color-tack); }
@@ -336,25 +349,42 @@
   </div>
 
   <div class="stat-grid" id="statGrid">
-    <div class="stat-tile"><span class="num" id="statPins">0</span><span class="label">Pins in rotation</span></div>
+    <div class="stat-tile highlight"><span class="num" id="statDraft">0</span><span class="label">Not pinned yet</span></div>
+    <div class="stat-tile"><span class="num" id="statLive">0</span><span class="label">Already pinned</span></div>
     <div class="stat-tile"><span class="num" id="statBoards">0</span><span class="label">Boards</span></div>
-    <div class="stat-tile"><span class="num" id="statPostedToday">0</span><span class="label">Posted today</span></div>
-    <div class="stat-tile"><span class="num" id="statNeverPosted">0</span><span class="label">Never re-saved yet</span></div>
+    <div class="stat-tile"><span class="num" id="statPostedToday">0</span><span class="label">Re-saved today</span></div>
+  </div>
+
+  <div class="section" id="toCreateSection">
+    <div class="section-head">
+      <h2>Not pinned yet</h2>
+      <span class="sub" id="toCreateSub">Title and description are ready \u2014 add a picture, tags, and a board, then mark it pinned.</span>
+    </div>
+    <div class="table-tools">
+      <input type="text" id="toCreateSearch" placeholder="Search title\u2026">
+      <select id="toCreateDestFilter">
+        <option value="all">All destinations</option>
+        <option value="etsy">Etsy only</option>
+        <option value="payhip">Payhip only</option>
+      </select>
+    </div>
+    <div class="queue-grid" id="toCreateGrid"></div>
+    <p class="empty-note" id="toCreateEmpty" hidden>Everything is pinned \u2014 nothing left to create.</p>
   </div>
 
   <div class="section">
     <div class="section-head">
-      <h2>Today's queue</h2>
-      <span class="sub">Oldest-saved pins surface first. Mark one posted and the next takes its place.</span>
+      <h2>Today's re-save queue</h2>
+      <span class="sub">For pins already live on Pinterest. Oldest-saved surface first \u2014 mark one posted and the next takes its place.</span>
     </div>
     <div class="queue-grid" id="queueGrid"></div>
-    <p class="empty-note" id="queueEmptyNote" hidden>All caught up \u2014 every pin has been re-saved today.</p>
+    <p class="empty-note" id="queueEmptyNote" hidden>All caught up \u2014 every live pin has been re-saved today.</p>
   </div>
 
   <div class="section" id="addSection">
     <div class="section-head">
       <h2>Add a pin</h2>
-      <span class="sub">New pins join the same rotation as the rest.</span>
+      <span class="sub">Log a pin you just made, or add a new one to plan for later.</span>
     </div>
     <div class="form-row">
       <div class="field">
@@ -367,6 +397,20 @@
       </div>
     </div>
     <div class="field">
+      <label for="newPinDesc">Pin description</label>
+      <textarea id="newPinDesc" placeholder="Pinterest description text\u2026"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label for="newPinTags">Tags / keywords</label>
+        <input type="text" id="newPinTags" placeholder="e.g. babytracker, newbornlife">
+      </div>
+      <div class="field">
+        <label>Is this already pinned?</label>
+        <div class="dest-toggle-row" id="newPinStatusPicker"></div>
+      </div>
+    </div>
+    <div class="field">
       <label>Where does this pin link to?</label>
       <div class="dest-toggle-row" id="newPinDestPicker"></div>
       <span class="hint">Colored-background pins \u2192 Etsy. White-background pins \u2192 Payhip. Match the pin image you're saving.</span>
@@ -376,7 +420,7 @@
       <div class="board-picker" id="newPinBoardPicker"></div>
     </div>
     <div style="display:flex; gap:10px;">
-      <button class="primary" id="addPinBtn">Add pin to rotation</button>
+      <button class="primary" id="addPinBtn">Add pin</button>
     </div>
 
     <details class="subsection" id="importSection">
@@ -393,13 +437,12 @@ Holiday &amp; Gift Planning"></textarea>
         </div>
         <div class="field">
           <label>Then bulk-add pins</label>
-          <textarea id="bulkPins" placeholder="Title | Pinterest pin link | Board 1; Board 2 | etsy
-Title only, no link yet
-Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"></textarea>
-          <span class="hint">One pin per line: <span class="mono">Title | pin link | Board A; Board B | etsy or payhip</span> \u2014 link, boards and destination are optional (destination defaults to Etsy).</span>
+          <textarea class="mono-area" id="bulkPins" placeholder="Title | pin link | Board 1; Board 2 | etsy | description text | tags | live
+Title only, no link yet"></textarea>
+          <span class="hint">One pin per line: <span class="mono">Title | link | Board A; Board B | etsy or payhip | description | tags | draft or live</span> \u2014 everything after Title is optional. Destination defaults to Etsy, status defaults to Live (already pinned).</span>
         </div>
         <div style="display:flex; gap:10px;">
-          <button class="primary" id="bulkPinsBtn">Add pins to rotation</button>
+          <button class="primary" id="bulkPinsBtn">Add pins</button>
         </div>
       </div>
     </details>
@@ -422,11 +465,16 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
         <option value="etsy">Etsy only</option>
         <option value="payhip">Payhip only</option>
       </select>
+      <select id="statusFilterSelect">
+        <option value="all">All statuses</option>
+        <option value="draft">Not pinned yet</option>
+        <option value="live">Already pinned</option>
+      </select>
     </div>
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>Pin</th><th>Boards</th><th>Links to</th><th>Times posted</th><th>Last posted</th><th></th></tr>
+          <tr><th>Pin</th><th>Status</th><th>Boards</th><th>Links to</th><th>Tags</th><th>Times posted</th><th>Last posted</th><th></th></tr>
         </thead>
         <tbody id="pinsTableBody"></tbody>
       </table>
@@ -463,15 +511,17 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
 (function(){
   const EPOCH = "1970-01-01T00:00:00.000Z";
   const QUEUE_SIZE = 3;
-  const STORAGE_KEY = "mfsPinQueue_v1";
+  const STORAGE_KEY = "mfsPinQueue_v2";
+  const OLD_STORAGE_KEY = "mfsPinQueue_v1";
 
-  const SEED_DATA = {"pins": [{"id": "p1141099625194586744", "title": "Bilingual Baby Tracker App", "link": "https://www.pinterest.com/pin/1141099625194586744/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625194586942", "title": "Baby Care Tracker — Simple, Fast, Built for Real 2 AM Parenting", "link": "https://www.pinterest.com/pin/1141099625194586942/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625194587088", "title": "Baby & Toddler Tracker for Android & iPhone", "link": "https://www.pinterest.com/pin/1141099625194587088/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625194587250", "title": "Baby & Toddler Digital Tracker for iPhone & Android Phones", "link": "https://www.pinterest.com/pin/1141099625194587250/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625195356403", "title": "Digital Baby Tracker", "link": "https://www.pinterest.com/pin/1141099625195356403/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625195357103", "title": "LIFE ADMIN HQ — Your Whole Household, Running from One App", "link": "https://www.pinterest.com/pin/1141099625195357103/", "boards": ["Everyday Life & Organization"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625195414106", "title": "Gift & Savings Planner: Birthday & Christmas Reminder & Budget", "link": "https://www.pinterest.com/pin/1141099625195414106/", "boards": ["Christmas Budget & Gift Savings Planner"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625196567617", "title": "One clean app for your whole semester.", "link": "https://www.pinterest.com/pin/1141099625196567617/", "boards": ["Students & Learning"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625196568083", "title": "Semester tracker: your full picture, one screen.", "link": "https://www.pinterest.com/pin/1141099625196568083/", "boards": ["Students & Learning"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625196568692", "title": "Class schedule tracker: always on you.", "link": "https://www.pinterest.com/pin/1141099625196568692/", "boards": ["Students & Learning"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625196568850", "title": "Never miss a deadline: assignment tracker.", "link": "https://www.pinterest.com/pin/1141099625196568850/", "boards": ["Students & Learning"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625196569008", "title": "See your whole month in one tap.", "link": "https://www.pinterest.com/pin/1141099625196569008/", "boards": ["Students & Learning"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197017091", "title": "Wedding Planner", "link": "https://www.pinterest.com/pin/1141099625197017091/", "boards": ["Everyday Life & Organization"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197068110", "title": "Car Maintenance Tracker – No App Store, No Subscription", "link": "https://www.pinterest.com/pin/1141099625197068110/", "boards": ["Car Maintenance Log & Reminders"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197069077", "title": "Car Maintenance Tracker App – Track Tasks & Mileage", "link": "https://www.pinterest.com/pin/1141099625197069077/", "boards": ["Car Maintenance Log & Reminders"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197088216", "title": "Wedding Planner", "link": "https://www.pinterest.com/pin/1141099625197088216/", "boards": ["Wedding Planning"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197539383", "title": "Moon Ritual Planner App – Moon Phases, Rituals & Journal", "link": "https://www.pinterest.com/pin/1141099625197539383/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197540853", "title": "Daily Intuition Log App – Track Hunches & Signs", "link": "https://www.pinterest.com/pin/1141099625197540853/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197541100", "title": "Emotional Reset Planner App – Guided 5-Step Reset", "link": "https://www.pinterest.com/pin/1141099625197541100/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197541378", "title": "Shadow Work Journal App – Guided Prompts for Healing", "link": "https://www.pinterest.com/pin/1141099625197541378/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197541589", "title": "Manifestation Tracker App – Intention, Energy & Journal", "link": "https://www.pinterest.com/pin/1141099625197541589/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197542211", "title": "Simple Spiritual Morning Routine App – 6-Field Ritual", "link": "https://www.pinterest.com/pin/1141099625197542211/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197542544", "title": "Advanced Spiritual Morning Routine App – 6 Practices", "link": "https://www.pinterest.com/pin/1141099625197542544/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197542899", "title": "Simple Spiritual Evening Routine App – 6-Field Wind-Down", "link": "https://www.pinterest.com/pin/1141099625197542899/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197544078", "title": "Advanced Spiritual Evening Routine App – 6 Practices", "link": "https://www.pinterest.com/pin/1141099625197544078/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618675", "title": "Inner Child Care Planner – Celestial Healing & Emotional Safety", "link": "https://www.pinterest.com/pin/1141099625197618675/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618686", "title": "Self-Love Routine Builder – Daily, Weekly & Monthly Practice", "link": "https://www.pinterest.com/pin/1141099625197618686/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618693", "title": "Premium Car Maintenance Tracker – Fleet Management App", "link": "https://www.pinterest.com/pin/1141099625197618693/", "boards": ["Car Maintenance Log & Reminders"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618791", "title": "Daily Healing Habits Tracker App – 4-Part Healing Wheel", "link": "https://www.pinterest.com/pin/1141099625197618791/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618844", "title": "Basic Car Maintenance Tracker – Tasks & Mileage App", "link": "https://www.pinterest.com/pin/1141099625197618844/", "boards": ["Car Maintenance Log & Reminders"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618862", "title": "Advanced Healing Habits Tracker – Daily, Weekly & Monthly", "link": "https://www.pinterest.com/pin/1141099625197618862/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618894", "title": "Standard Car Maintenance Tracker – Multi-Car Dashboard", "link": "https://www.pinterest.com/pin/1141099625197618894/", "boards": ["Car Maintenance Log & Reminders"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197619066", "title": "Ultimate Healing Habits Tracker – Daily Reset & Grounding", "link": "https://www.pinterest.com/pin/1141099625197619066/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198030346", "title": "Baby Care Tracker, Basic | Feed, Sleep, Diaper Log, Growth Chart, Vaccines, Milestones (v2)", "link": "https://www.pinterest.com/pin/1141099625198030346/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198030400", "title": "Baby Care Tracker, Basic | Feed, Sleep, Diaper Log, Growth Chart, Vaccines, Milestones", "link": "https://www.pinterest.com/pin/1141099625198030400/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198030430", "title": "Baby Care Tracker, Standard | Feed, Sleep, Diaper Log, Growth Chart, Vaccines, Milestones (v2)", "link": "https://www.pinterest.com/pin/1141099625198030430/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198030455", "title": "Baby Care Tracker, Standard | Feed, Sleep, Diaper Log, Growth Chart, Vaccines, Milestones", "link": "https://www.pinterest.com/pin/1141099625198030455/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198030542", "title": "Wedding Planner App, Guest List, Budget & Vendor Tracker", "link": "https://www.pinterest.com/pin/1141099625198030542/", "boards": ["Wedding Planning"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278778", "title": "Basic Finance Hub | Household Budget, Expense Tracker, Multi-income, Bills, Debt Payoff", "link": "https://www.pinterest.com/pin/1141099625198278778/", "boards": ["Budget & Finance Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278802", "title": "Side Hustle Hub | Gig Worker Finance Tracker, Tax Estimator", "link": "https://www.pinterest.com/pin/1141099625198278802/", "boards": ["Budget & Finance Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278816", "title": "Ultimate Finance Hub | Budget Planner, Expense Tracker, Multi-income, Bills, Debt Payoff", "link": "https://www.pinterest.com/pin/1141099625198278816/", "boards": ["Budget & Finance Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278831", "title": "Simple Finance Hub | Accounts, Bills, Pending Tracker", "link": "https://www.pinterest.com/pin/1141099625198278831/", "boards": ["Budget & Finance Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278889", "title": "Daily Planner App | Daily Weekly Monthly To-do List, Aesthetic Life Planner", "link": "https://www.pinterest.com/pin/1141099625198278889/", "boards": ["Life Admin Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278899", "title": "Life Admin HQ Planner | Household Organizer, Finance, Passwords", "link": "https://www.pinterest.com/pin/1141099625198278899/", "boards": ["Life Admin Planners"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278946", "title": "Basic: Private Period Tracker | Cycle Calendar & Predictions | Digital Menstrual Log", "link": "https://www.pinterest.com/pin/1141099625198278946/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278957", "title": "Standard Period Tracker | Cycle Insights, Pattern Detection, Pill Reminder", "link": "https://www.pinterest.com/pin/1141099625198278957/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278968", "title": "Period Tracker | PIN Protected Cycle, Fertility, TTC, BBT, Weight Charts (v2)", "link": "https://www.pinterest.com/pin/1141099625198278968/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278998", "title": "Period Tracker | PIN Protected Cycle, Fertility, TTC, BBT, Weight Charts", "link": "https://www.pinterest.com/pin/1141099625198278998/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "payhip-seed-1", "title": "Retirement Savings Tracker App", "link": "Growth Projections & Milestones", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-2", "title": "Tax Deduction Tracker App", "link": "Log Write-Offs, Export CSV for Your Accountant", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-3", "title": "Student Loan Payoff Tracker App", "link": "See Your Debt Free Date", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-4", "title": "Investment Portfolio Tracker App", "link": "Gain, Loss & Allocation at a Glance", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-5", "title": "Subscription Tracker App", "link": "Catch Renewals and Price Increases Before They Hit", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-6", "title": "Daily Expense Tracker App", "link": "Simple Budget and Spending Log", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-7", "title": "Kids Allowance Tracker App", "link": "Chores and Savings in One Place", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-8", "title": "Tip and Hourly Income Tracker App", "link": "Log Shifts and See Your Real Hourly Rate", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-9", "title": "No Spend Challenge Tracker App", "link": "Streaks and Savings Avoided", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-10", "title": "Bill Due Date Calendar App", "link": "Never Miss a Payment Again", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-11", "title": "Debt Payoff Planner App", "link": "Snowball and Avalanche Tracker", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-12", "title": "Savings Goal Tracker App", "link": "Vacation Fund, Emergency Fund and More", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-13", "title": "Sinking Funds Planner App", "link": "Save Toward Multiple Goals at Once", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-14", "title": "Cooking Journal App", "link": "Log Meals, Ratings and Reflections", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-15", "title": "Family Recipe Archive App", "link": "Save Recipes With Photos and Stories", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-16", "title": "Recipe Box App", "link": "Save and Organize Every Recipe You Love", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-17", "title": "Kitchen HQ App", "link": "Recipe Box, Meal Planner and Pantry Tracker in One", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-18", "title": "Meal Prep Planner App", "link": "Track Batch Cooking Portions and Use By Dates", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-19", "title": "Pantry Tracker App", "link": "Fridge, Freezer and Spice Rack Inventory", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-20", "title": "Weekly Meal Planner App", "link": "Plan Meals and Build Your Shopping List Automatically", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-21", "title": "Grocery List App", "link": "Saved Staples and Offline Use", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-22", "title": "Daily HQ Planner App", "link": "Daily, Weekly and Monthly Tasks in One Place", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-23", "title": "Life Admin HQ Planner App", "link": "Household Organizer, Finance and Passwords", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-24", "title": "Baby Care Tracker App", "link": "Log Feeds, Diapers, Sleep and Milestones", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-25", "title": "Baby Care Tracker App", "link": "Feeding, Sleep and Diaper Log With Milestones", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-26", "title": "Baby Care Tracker App", "link": "Growth Chart, Vaccines and Full Milestone Log", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-27", "title": "Wedding Planner App", "link": "Guest List, Budget and Vendor Tracker", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-28", "title": "Wedding Planner App", "link": "Guest List, Budget, Vendors and Timeline", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-29", "title": "Wedding Planner App", "link": "Guest List, Budget, Vendors and Seating Chart", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-30", "title": "Pet Health Tracker App", "link": "Vaccine Reminders and Vet Visit Log", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-31", "title": "Pet Health Tracker App", "link": "Vaccines, Medications and Daily Care Log", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-32", "title": "Multi Pet Health Tracker App", "link": "Vaccines and Medications for the Whole Household", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-33", "title": "Car Maintenance Tracker App", "link": "Oil Changes and Mileage Log", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-34", "title": "Car Maintenance Tracker App", "link": "Multi Vehicle, Fuel and Mileage Log", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-35", "title": "Car Maintenance Tracker App", "link": "Fleet Management and Expense Log", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-36", "title": "Home Maintenance Scheduler App", "link": "Seasonal Tasks and Appliance List", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-37", "title": "Home Maintenance Tracker App", "link": "Family Cleaning Schedule and Warranty Alerts", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-38", "title": "Property Management App for Landlords", "link": "Multi Property Tracker and Expense Log", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-39", "title": "Gift and Savings Planner App", "link": "Birthday and Christmas Budget Tracker", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-40", "title": "Holiday Gift Planner App", "link": "Gift Budget Tracker and Christmas Card List", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-41", "title": "Holiday Planner App", "link": "Dinner Menu, Stocking Stuffers and Gift Budget", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-42", "title": "Holiday Planner App", "link": "Gift Tracker, Decorating Plan and Storage Inventory", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-43", "title": "Reading Log App", "link": "Track Books, TBR List, Quotes and Stats", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-44", "title": "Reading Log App", "link": "Daily Reading Habit Tracker, Shelf and Quotes", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-45", "title": "Reading Log App", "link": "Habit Tracker, Book Notes and Reading Challenges", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-46", "title": "Study Tracker App", "link": "Subject Log, Exam Countdown and Study Sessions", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-47", "title": "Study Tracker App", "link": "Daily Dashboard, Focus Timer and Study Streaks", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-48", "title": "Study Tracker App", "link": "Exam Prep With Spaced Review and Topic Tags", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-49", "title": "Student Planner App", "link": "Assignment Tracker and Class Schedule", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-50", "title": "Student Planner App", "link": "GPA Calculator, Grade Tracker and Assignments", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-51", "title": "Student Planner App", "link": "GPA Tracker, Study Timer and Habit Building", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-52", "title": "Side Hustle Finance Tracker App", "link": "Income, Expenses and Tax Estimator", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-53", "title": "Finance Hub App", "link": "Track Accounts, Bills and Pending Payments", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-54", "title": "Finance Hub App", "link": "Household Budget, Multi Income and Debt Payoff", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-55", "title": "Finance Hub App", "link": "Complete Budget Planner and Debt Payoff Tracker", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-56", "title": "Spiritual Morning Routine App", "link": "Intention, Gratitude and Ritual Tracker", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-57", "title": "Spiritual Morning Routine App", "link": "Intention, Gratitude and Breathwork", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-58", "title": "Spiritual Evening Routine App", "link": "Gratitude, Release and Rest Ritual", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-59", "title": "Spiritual Evening Routine App", "link": "Guided Reflection and Sleep Prep", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-60", "title": "Daily Healing Habits Tracker App", "link": "Somatic, Cognitive and Emotional Wellness", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-61", "title": "Healing Habits Tracker App", "link": "Daily, Weekly and Monthly Wellness Planner", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-62", "title": "Healing Habits Tracker App", "link": "Daily Reset, Somatic Calm and Grounding", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-63", "title": "Self Love Routine Builder App", "link": "Inner Child and Self Worth Journal", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-64", "title": "Inner Child Healing Planner App", "link": "Guided Journal, Play and Safety Tracker", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-65", "title": "Manifestation Tracker App", "link": "Vision Board and Goal Journal", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-66", "title": "Shadow Work Journal App", "link": "Guided Prompts for Inner Healing", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-67", "title": "Emotional Reset Planner App", "link": "Guided 5 Step Regulation Flow", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-68", "title": "Daily Intuition Journal App", "link": "Confidence Compass and Synchronicity Log", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-69", "title": "Moon Ritual Planner App", "link": "Real Lunar Phases and Manifestation Journal", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-70", "title": "Period Tracker App", "link": "Cycle Calendar and Flow Predictions", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-71", "title": "Period and Cycle Tracker App", "link": "Calendar, Predictions and Symptom Log", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-72", "title": "Period Tracker App", "link": "PIN Protected Cycle, Fertility and BBT Charts", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-73", "title": "Fitness Planner App", "link": "Workout Timer, Macro Tracker and PR Charts", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-74", "title": "Vacation Planner App", "link": "Travel Budget, Itinerary and Packing List", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-75", "title": "Family Chore Dash App", "link": "Gamified Chores and Allowance Tracker for Kids", "boards": [], "destination": "payhip", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}], "boards": [{"id": "budget-finance-planners", "name": "Budget & Finance Planners", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "car-maintenance-log-reminders", "name": "Car Maintenance Log & Reminders", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "chore-chart-allowance-tracker-kids", "name": "Chore Chart & Allowance Tracker (Kids)", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "christmas-budget-gift-savings-planner", "name": "Christmas Budget & Gift Savings Planner", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "digital-baby-care-tools", "name": "Digital Baby Care Tools", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "emotional-wellness-tools", "name": "Emotional Wellness Tools", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "everyday-life-organization", "name": "Everyday Life & Organization", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "life-admin-planners", "name": "Life Admin Planners", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "mind-body-spirit-planners", "name": "Mind, Body & Spirit Planners", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "students-learning", "name": "Students & Learning", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "wedding-planning", "name": "Wedding Planning", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "health-cycle-tracking", "name": "Health & Cycle Tracking", "addedAt": "2026-09-13T18:46:14.000Z"}]};
+  const SEED_DATA = {"pins": [{"id": "p1141099625194586744", "title": "Bilingual Baby Tracker App", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625194586744/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625194586942", "title": "Baby Care Tracker — Simple, Fast, Built for Real 2 AM Parenting", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625194586942/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625194587088", "title": "Baby & Toddler Tracker for Android & iPhone", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625194587088/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625194587250", "title": "Baby & Toddler Digital Tracker for iPhone & Android Phones", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625194587250/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625195356403", "title": "Digital Baby Tracker", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625195356403/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625195357103", "title": "LIFE ADMIN HQ — Your Whole Household, Running from One App", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625195357103/", "boards": ["Everyday Life & Organization"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625195414106", "title": "Gift & Savings Planner: Birthday & Christmas Reminder & Budget", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625195414106/", "boards": ["Christmas Budget & Gift Savings Planner"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625196567617", "title": "One clean app for your whole semester.", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625196567617/", "boards": ["Students & Learning"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625196568083", "title": "Semester tracker: your full picture, one screen.", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625196568083/", "boards": ["Students & Learning"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625196568692", "title": "Class schedule tracker: always on you.", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625196568692/", "boards": ["Students & Learning"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625196568850", "title": "Never miss a deadline: assignment tracker.", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625196568850/", "boards": ["Students & Learning"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625196569008", "title": "See your whole month in one tap.", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625196569008/", "boards": ["Students & Learning"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197017091", "title": "Wedding Planner", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197017091/", "boards": ["Everyday Life & Organization"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197068110", "title": "Car Maintenance Tracker – No App Store, No Subscription", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197068110/", "boards": ["Car Maintenance Log & Reminders"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197069077", "title": "Car Maintenance Tracker App – Track Tasks & Mileage", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197069077/", "boards": ["Car Maintenance Log & Reminders"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197088216", "title": "Wedding Planner", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197088216/", "boards": ["Wedding Planning"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197539383", "title": "Moon Ritual Planner App – Moon Phases, Rituals & Journal", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197539383/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197540853", "title": "Daily Intuition Log App – Track Hunches & Signs", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197540853/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197541100", "title": "Emotional Reset Planner App – Guided 5-Step Reset", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197541100/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197541378", "title": "Shadow Work Journal App – Guided Prompts for Healing", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197541378/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197541589", "title": "Manifestation Tracker App – Intention, Energy & Journal", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197541589/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197542211", "title": "Simple Spiritual Morning Routine App – 6-Field Ritual", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197542211/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197542544", "title": "Advanced Spiritual Morning Routine App – 6 Practices", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197542544/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197542899", "title": "Simple Spiritual Evening Routine App – 6-Field Wind-Down", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197542899/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197544078", "title": "Advanced Spiritual Evening Routine App – 6 Practices", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197544078/", "boards": ["Mind, Body & Spirit Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618675", "title": "Inner Child Care Planner – Celestial Healing & Emotional Safety", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197618675/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618686", "title": "Self-Love Routine Builder – Daily, Weekly & Monthly Practice", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197618686/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618693", "title": "Premium Car Maintenance Tracker – Fleet Management App", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197618693/", "boards": ["Car Maintenance Log & Reminders"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618791", "title": "Daily Healing Habits Tracker App – 4-Part Healing Wheel", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197618791/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618844", "title": "Basic Car Maintenance Tracker – Tasks & Mileage App", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197618844/", "boards": ["Car Maintenance Log & Reminders"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618862", "title": "Advanced Healing Habits Tracker – Daily, Weekly & Monthly", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197618862/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197618894", "title": "Standard Car Maintenance Tracker – Multi-Car Dashboard", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197618894/", "boards": ["Car Maintenance Log & Reminders"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625197619066", "title": "Ultimate Healing Habits Tracker – Daily Reset & Grounding", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625197619066/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198030346", "title": "Baby Care Tracker, Basic | Feed, Sleep, Diaper Log, Growth Chart, Vaccines, Milestones (v2)", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198030346/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198030400", "title": "Baby Care Tracker, Basic | Feed, Sleep, Diaper Log, Growth Chart, Vaccines, Milestones", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198030400/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198030430", "title": "Baby Care Tracker, Standard | Feed, Sleep, Diaper Log, Growth Chart, Vaccines, Milestones (v2)", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198030430/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198030455", "title": "Baby Care Tracker, Standard | Feed, Sleep, Diaper Log, Growth Chart, Vaccines, Milestones", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198030455/", "boards": ["Digital Baby Care Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198030542", "title": "Wedding Planner App, Guest List, Budget & Vendor Tracker", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198030542/", "boards": ["Wedding Planning"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278778", "title": "Basic Finance Hub | Household Budget, Expense Tracker, Multi-income, Bills, Debt Payoff", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198278778/", "boards": ["Budget & Finance Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278802", "title": "Side Hustle Hub | Gig Worker Finance Tracker, Tax Estimator", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198278802/", "boards": ["Budget & Finance Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278816", "title": "Ultimate Finance Hub | Budget Planner, Expense Tracker, Multi-income, Bills, Debt Payoff", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198278816/", "boards": ["Budget & Finance Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278831", "title": "Simple Finance Hub | Accounts, Bills, Pending Tracker", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198278831/", "boards": ["Budget & Finance Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278889", "title": "Daily Planner App | Daily Weekly Monthly To-do List, Aesthetic Life Planner", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198278889/", "boards": ["Life Admin Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278899", "title": "Life Admin HQ Planner | Household Organizer, Finance, Passwords", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198278899/", "boards": ["Life Admin Planners"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278946", "title": "Basic: Private Period Tracker | Cycle Calendar & Predictions | Digital Menstrual Log", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198278946/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278957", "title": "Standard Period Tracker | Cycle Insights, Pattern Detection, Pill Reminder", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198278957/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278968", "title": "Period Tracker | PIN Protected Cycle, Fertility, TTC, BBT, Weight Charts (v2)", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198278968/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "p1141099625198278998", "title": "Period Tracker | PIN Protected Cycle, Fertility, TTC, BBT, Weight Charts", "description": "", "tags": "", "link": "https://www.pinterest.com/pin/1141099625198278998/", "boards": ["Emotional Wellness Tools"], "destination": "etsy", "status": "live", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "payhip-seed-1", "title": "Retirement Savings Tracker App | Growth Projections & Milestones", "description": "Track your retirement savings from your phone with real growth projections and milestone markers. See how close you are to your number without opening a spreadsheet. No subscription, no app store, just tap the link and go. Works on iPhone and Android. #retirementplanning #savingstracker #financeapp", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-2", "title": "Tax Deduction Tracker App | Log Write-Offs, Export CSV for Your Accountant", "description": "Stop losing receipts and write-offs. Log every tax deduction as it happens and export a clean CSV for your accountant at tax time. A simple mobile app, no subscription, no download from an app store. Just tap and start tracking. Works on iPhone and Android. #taxseason #smallbusiness #deductiontracker", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-3", "title": "Student Loan Payoff Tracker App | See Your Debt Free Date", "description": "See exactly when you will be debt free. This app builds your student loan payoff plan, tracks interest saved, and counts down to your debt free date right from your phone. No subscription, no app store. Tap the link to start your payoff plan today. #studentloans #debtfreejourney #payoffplan", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-4", "title": "Investment Portfolio Tracker App | Gain, Loss & Allocation at a Glance", "description": "Check your gains, losses, and asset allocation without logging into five different accounts. This mobile portfolio tracker gives you trend charts and allocation breakdowns in one place. No subscription, works on iPhone and Android. Tap to try it today. #investing #portfoliotracker #personalfinance", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-5", "title": "Subscription Tracker App | Catch Renewals and Price Increases Before They Hit", "description": "Find out how much your subscriptions actually cost you every month, and get ahead of renewals and price increases before they surprise you. One time purchase, no monthly fee. Works right on your phone, iPhone and Android. #subscriptiontracker #budgeting #savemoney", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-6", "title": "Daily Expense Tracker App | Simple Budget and Spending Log", "description": "A no fuss way to log daily spending and stay on budget. Add expenses in seconds, see where your money actually goes, and skip the spreadsheet. One time purchase, no subscription, no app store. Works on iPhone and Android, tap and go. #expensetracker #budgetapp #moneymanagement", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-7", "title": "Kids Allowance Tracker App | Chores and Savings in One Place", "description": "Teach kids to save with a simple allowance tracker that ties chores to savings goals. No subscription, no ads, just a straightforward app that works on any phone. Tap the link to get started. #kidsallowance #familyfinance #teachkidstosave", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-8", "title": "Tip and Hourly Income Tracker App | Log Shifts and See Your Real Hourly Rate", "description": "Track shifts, tips, and wages, then see your real effective hourly rate after tips. Built for service workers who want to know what they are actually earning. No subscription, works on iPhone and Android. Tap to start tracking your shifts. #tiptracker #serviceindustry #hourlywages", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-9", "title": "No Spend Challenge Tracker App | Streaks and Savings Avoided", "description": "Turn a no spend challenge into something you can actually see. Track your streak, log savings avoided, and stay motivated day to day. Simple mobile app, no subscription, no app store needed. Tap the link to start your challenge. #nospendchallenge #savingschallenge #budgettips", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-10", "title": "Bill Due Date Calendar App | Never Miss a Payment Again", "description": "Every bill, every due date, in one calendar on your phone. Get a clear view of what is due and when so nothing slips through the cracks. No subscription, no login, just tap and check. Works on iPhone and Android. #billreminder #budgeting #financeapp", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-11", "title": "Debt Payoff Planner App | Snowball and Avalanche Tracker", "description": "Pick your method, snowball or avalanche, and watch your debt payoff plan take shape. This app tracks every payment and shows your progress toward debt free. One time purchase, no subscription. Works on iPhone and Android, tap to start. #debtpayoff #debtfreejourney #snowballmethod", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-12", "title": "Savings Goal Tracker App | Vacation Fund, Emergency Fund and More", "description": "Set a savings goal, whether it is a vacation, an emergency fund, or something else, and watch your progress in real time. Simple visual tracking, no subscription, no app store required. Works on iPhone and Android, tap the link to start saving. #savingsgoals #emergencyfund #budgetapp", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-13", "title": "Sinking Funds Planner App | Save Toward Multiple Goals at Once", "description": "Manage several savings goals side by side with a dedicated sinking funds planner. See exactly how much is set aside for each goal without spreadsheets. No subscription, works right on your phone. Tap to start planning your sinking funds. #sinkingfunds #budgetplanner #savingsplan", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-14", "title": "Cooking Journal App | Log Meals, Ratings and Reflections", "description": "Keep a running record of what you cooked, how it turned out, and what you would change next time. A digital food diary that lives on your phone, no subscription, no app store. Tap the link to start your cooking journal today. #cookingjournal #fooddiary #homecooking", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-15", "title": "Family Recipe Archive App | Save Recipes With Photos and Stories", "description": "Preserve family recipes the way they deserve, with photos and the stories behind them, all in one digital keepsake on your phone. No subscription, no cloud account required. Tap to start building your family's recipe archive. #familyrecipes #recipekeepsake #digitalcookbook", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-16", "title": "Recipe Box App | Save and Organize Every Recipe You Love", "description": "A digital recipe box that keeps every recipe you love organized and searchable on your phone. Skip the screenshots and scattered notes app entries. No subscription, works on iPhone and Android. Tap to build your recipe box. #recipeapp #digitalrecipebook #homecooking", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-17", "title": "Kitchen HQ App | Recipe Box, Meal Planner and Pantry Tracker in One", "description": "Recipes, meal planning, and pantry tracking, all in one digital kitchen organizer that lives on your phone. Stop juggling three different apps for your kitchen. No subscription, no app store. Tap to try Kitchen HQ today. #mealplanning #kitchenorganization #pantrytracker", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-18", "title": "Meal Prep Planner App | Track Batch Cooking Portions and Use By Dates", "description": "Plan batch cooking sessions and track portions and use by dates so nothing goes to waste in the freezer. Built for real meal prep routines. No subscription, works on iPhone and Android. Tap the link to plan your next meal prep day. #mealprep #batchcooking #mealplanningapp", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-19", "title": "Pantry Tracker App | Fridge, Freezer and Spice Rack Inventory", "description": "Know what is actually in your fridge, freezer, and spice rack before you shop. This pantry tracker keeps a running inventory right on your phone. No subscription, no app store download. Tap to start tracking your pantry. #pantrytracker #kitcheninventory #mealplanning", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-20", "title": "Weekly Meal Planner App | Plan Meals and Build Your Shopping List Automatically", "description": "Plan your week of meals and get a shopping list built automatically from what you picked. No more forgetting ingredients at the store. One time purchase, no subscription. Works on iPhone and Android, tap to plan your week. #mealplanner #shoppinglist #weeklymealplan", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-21", "title": "Grocery List App | Saved Staples and Offline Use", "description": "A grocery list that remembers your staples and works even without service in the store. Add items fast and check them off as you shop. No subscription, no account needed. Tap to start your grocery list today. #grocerylist #groceryapp #shoppinglist", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-22", "title": "Daily HQ Planner App | Daily, Weekly and Monthly Tasks in One Place", "description": "Keep daily, weekly, and monthly tasks organized in one simple planner that lives on your phone. Built for people who want structure without the clutter of a big productivity app. No subscription. Tap to start planning your days. #dailyplanner #taskmanager #productivityapp", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-23", "title": "Life Admin HQ Planner App | Household Organizer, Finance and Passwords", "description": "Household tasks, finances, and passwords, organized in one command center for your life. This planner brings the scattered pieces of life admin into a single app on your phone. No subscription, no cloud account required. Tap to get organized. #lifeadmin #householdorganizer #familyplanner", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-24", "title": "Baby Care Tracker App | Log Feeds, Diapers, Sleep and Milestones", "description": "Track feeds, diaper changes, sleep, and milestones from your phone during those blurry newborn days. Simple logging when you have one hand free. No subscription, no account needed. Tap to start tracking your baby's day. #babytracker #newbornlife #babycare", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-25", "title": "Baby Care Tracker App | Feeding, Sleep and Diaper Log With Milestones", "description": "A more complete baby log for feeding, sleep, diapers, and milestones, built for parents who want the fuller picture without switching apps. No subscription, works on iPhone and Android. Tap to start logging your baby's routine. #babytracker #parentinglife #newbornschedule", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-26", "title": "Baby Care Tracker App | Growth Chart, Vaccines and Full Milestone Log", "description": "The complete baby tracker: feeding, sleep, diapers, a growth chart, vaccine records, and milestones, all in one place for your pediatrician visits and your own peace of mind. No subscription. Tap to start your baby's full record. #babytracker #growthchart #vaccinereminders", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-27", "title": "Wedding Planner App | Guest List, Budget and Vendor Tracker", "description": "Keep your guest list, budget, and vendors organized in one wedding planner that lives on your phone, not a scattered pile of spreadsheets. No subscription, no app store. Tap to start planning your wedding today. #weddingplanning #bridetobe #weddingbudget", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-28", "title": "Wedding Planner App | Guest List, Budget, Vendors and Timeline", "description": "Everything from guest list to vendor contracts to your day of timeline, tracked in one wedding planner on your phone. No subscription, no account needed. Tap to start planning every detail. #weddingplanner #weddingtimeline #bridetobe", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-29", "title": "Wedding Planner App | Guest List, Budget, Vendors and Seating Chart", "description": "The full wedding planning toolkit, guest list, budget, vendors, timeline, and a seating chart builder, all in one app on your phone. No subscription, no spreadsheets. Tap to start planning your wedding. #weddingplanning #seatingchart #weddingorganization", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-30", "title": "Pet Health Tracker App | Vaccine Reminders and Vet Visit Log", "description": "Keep your dog or cat's vaccine schedule, vet visits, and medications tracked in one simple app on your phone. Never show up to the vet unsure of the last shot date again. No subscription. Tap to start your pet's health log. #pethealthtracker #dogmom #vetreminders", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-31", "title": "Pet Health Tracker App | Vaccines, Medications and Daily Care Log", "description": "A fuller pet health record: vaccines, medications, and daily care logging for your dog or cat, all in one mobile app. No subscription, works on iPhone and Android. Tap to start tracking your pet's health. #pethealthtracker #catmom #petcare", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-32", "title": "Multi Pet Health Tracker App | Vaccines and Medications for the Whole Household", "description": "Track vaccines, medications, and care logs for every pet in your household, not just one, in a single app on your phone. Built for multi pet homes. No subscription, no app store. Tap to start your household's pet health log. #multipethousehold #pethealthtracker #dogandcat", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-33", "title": "Car Maintenance Tracker App | Oil Changes and Mileage Log", "description": "Track oil changes and mileage so you always know what your car needs and when. A simple maintenance log that lives on your phone. No subscription, no app store. Tap to start tracking your car's maintenance. #carmaintenance #oilchangereminder #cartracker", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-34", "title": "Car Maintenance Tracker App | Multi Vehicle, Fuel and Mileage Log", "description": "Track maintenance, fuel, and mileage across more than one vehicle in a single app. Built for households with more than one car to keep up with. No subscription, works on iPhone and Android. Tap to start tracking. #carmaintenance #fuellog #multicarhousehold", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-35", "title": "Car Maintenance Tracker App | Fleet Management and Expense Log", "description": "Manage maintenance, mileage, and expenses across an entire fleet of vehicles from your phone. Built for people managing more than a couple of cars. No subscription, no app store. Tap to start managing your fleet. #fleetmanagement #carmaintenance #vehicletracker", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-36", "title": "Home Maintenance Scheduler App | Seasonal Tasks and Appliance List", "description": "Keep seasonal home maintenance tasks and your appliance list organized in one scheduler on your phone. Stop forgetting the gutter cleaning or filter change again. No subscription. Tap to start scheduling your home maintenance. #homemaintenance #homeownertips #seasonalchecklist", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-37", "title": "Home Maintenance Tracker App | Family Cleaning Schedule and Warranty Alerts", "description": "Split cleaning tasks across the household and get warranty alerts before appliances age out of coverage, all in one home maintenance app. No subscription, no app store. Tap to organize your home's upkeep. #homemaintenance #familyorganization #cleaningschedule", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-38", "title": "Property Management App for Landlords | Multi Property Tracker and Expense Log", "description": "Track maintenance and expenses across multiple rental properties in one app built for landlords. See the full picture of your portfolio from your phone. No subscription, no app store. Tap to start managing your properties. #landlordlife #propertymanagement #rentalproperty", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-39", "title": "Gift and Savings Planner App | Birthday and Christmas Budget Tracker", "description": "Plan gift budgets for birthdays and Christmas year round, and keep wishlists organized so you never scramble last minute. No subscription, works on iPhone and Android. Tap to start planning your gift budget. #giftplanning #christmasbudget #wishlistapp", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-40", "title": "Holiday Gift Planner App | Gift Budget Tracker and Christmas Card List", "description": "Keep your holiday gift budget and Christmas card list in one simple app instead of scattered notes. No subscription, no app store required. Tap to start planning your holiday season. #holidayplanning #christmasplanner #giftbudget", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-41", "title": "Holiday Planner App | Dinner Menu, Stocking Stuffers and Gift Budget", "description": "Plan the holiday dinner menu, track stocking stuffers, and manage your gift budget all in one app on your phone. Everything the season needs in one place. No subscription. Tap to start planning your holidays. #holidayplanner #christmasdinner #stockingstuffers", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-42", "title": "Holiday Planner App | Gift Tracker, Decorating Plan and Storage Inventory", "description": "The complete holiday planner: gifts, decorating plans, and a storage inventory so you always know where the ornaments went. No subscription, no app store. Tap to start planning your best holiday season yet. #holidayplanning #christmasdecor #giftplanner", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-43", "title": "Reading Log App | Track Books, TBR List, Quotes and Stats", "description": "Log every book you read, keep a TBR list, save favorite quotes, and see your reading stats, all in one app on your phone. No subscription, no Goodreads account needed. Tap to start your reading log. #readinglog #bookstagram #tbrlist", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-44", "title": "Reading Log App | Daily Reading Habit Tracker, Shelf and Quotes", "description": "Build a daily reading habit with a tracker that also organizes your shelf and favorite quotes in one place. No subscription, works on iPhone and Android. Tap to start building your reading habit. #readinghabit #bookjournal #readingtracker", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-45", "title": "Reading Log App | Habit Tracker, Book Notes and Reading Challenges", "description": "The complete reading companion: habit tracking, detailed book notes, and reading challenges to keep you motivated all year. No subscription, no app store. Tap to start your reading journey. #readingchallenge #bookjournal #readinglog", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-46", "title": "Study Tracker App | Subject Log, Exam Countdown and Study Sessions", "description": "Log subjects, count down to exams, and track study sessions in one app built for students. No subscription, works right on your phone. Tap to start tracking your study time. #studytracker #collegeplanner #examprep", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-47", "title": "Study Tracker App | Daily Dashboard, Focus Timer and Study Streaks", "description": "A daily dashboard, a built in focus timer, and study streaks to keep you consistent through the semester. No subscription, no app store download. Tap to start your study streak today. #studymotivation #focustimer #studentlife", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-48", "title": "Study Tracker App | Exam Prep With Spaced Review and Topic Tags", "description": "Built for serious exam prep: spaced review flags, topic tags, and a term wrap dashboard to see your progress across the whole semester. No subscription, no app store. Tap to start your exam prep. #examprep #spacedrepetition #studytracker", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-49", "title": "Student Planner App | Assignment Tracker and Class Schedule", "description": "Keep assignments, class schedule, and daily tasks organized in one student planner on your phone. No subscription, no app store required. Tap to start planning your semester. #studentplanner #assignmenttracker #backtoschool", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-50", "title": "Student Planner App | GPA Calculator, Grade Tracker and Assignments", "description": "Calculate your GPA, track grades, and plan assignments in one student app built for staying on top of the semester. No subscription, works on iPhone and Android. Tap to start tracking your grades. #gpacalculator #gradetracker #studentplanner", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-51", "title": "Student Planner App | GPA Tracker, Study Timer and Habit Building", "description": "The full student toolkit: GPA tracking, a built in study timer, and habit tracking to build a routine that actually sticks. No subscription, no app store. Tap to start planning your best semester. #studentplanner #studyhabits #gpatracker", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-52", "title": "Side Hustle Finance Tracker App | Income, Expenses and Tax Estimator", "description": "Track income and expenses from every gig and get a running tax estimate, built specifically for gig workers and side hustlers. No subscription, no app store. Tap to start tracking your side hustle income. #sidehustle #gigworker #taxestimator", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-53", "title": "Finance Hub App | Track Accounts, Bills and Pending Payments", "description": "See your accounts, bills, and pending payments in one simple finance hub on your phone. No subscription, no bank login required. Tap to start organizing your finances. #financehub #budgetapp #billtracker", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-54", "title": "Finance Hub App | Household Budget, Multi Income and Debt Payoff", "description": "Manage a household budget with multiple incomes, expense tracking, bills, and a debt payoff plan, all in one finance hub. No subscription, no app store. Tap to start managing your household finances. #householdbudget #financehub #debtpayoff", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-55", "title": "Finance Hub App | Complete Budget Planner and Debt Payoff Tracker", "description": "The complete household finance system: budget planning, multi income tracking, bills, and debt payoff, built into one app. No subscription, no app store. Tap to start taking control of your finances. #financehub #budgetplanner #debtfree", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-56", "title": "Spiritual Morning Routine App | Intention, Gratitude and Ritual Tracker", "description": "Start each day with intention setting, gratitude, and a simple ritual tracker built into one app. No subscription, no account needed. Tap to start your morning practice. #morningritual #gratitudepractice #spiritualwellness", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-57", "title": "Spiritual Morning Routine App | Intention, Gratitude and Breathwork", "description": "A fuller morning practice with intention setting, gratitude, and guided breathwork, all tracked in one app. No subscription, works on iPhone and Android. Tap to build your morning ritual. #morningroutine #breathwork #spiritualpractice", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-58", "title": "Spiritual Evening Routine App | Gratitude, Release and Rest Ritual", "description": "Wind down with a gratitude practice, a release ritual, and a path to rest, all in one evening routine app. No subscription, no app store. Tap to start your evening practice. #eveningroutine #gratitudejournal #windingdown", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-59", "title": "Spiritual Evening Routine App | Guided Reflection and Sleep Prep", "description": "A guided reflection practice and sleep prep ritual to help you close out the day intentionally. No subscription, works on iPhone and Android. Tap to build your evening routine. #eveningritual #sleepprep #spiritualwellness", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-60", "title": "Daily Healing Habits Tracker App | Somatic, Cognitive and Emotional Wellness", "description": "Track daily healing habits across somatic, cognitive, emotional, and spiritual wellness in one simple app. No subscription, no app store. Tap to start your healing habit practice. #healinghabits #selfcareapp #wellnesstracker", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-61", "title": "Healing Habits Tracker App | Daily, Weekly and Monthly Wellness Planner", "description": "A fuller wellness planner tracking healing habits daily, weekly, and monthly so you can see patterns over time. No subscription, works on iPhone and Android. Tap to start tracking your healing journey. #healingjourney #wellnessplanner #selfcaretracker", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-62", "title": "Healing Habits Tracker App | Daily Reset, Somatic Calm and Grounding", "description": "The complete healing habits system with a daily reset flow, somatic calming tools, and grounding practices built in. No subscription, no app store. Tap to start your daily reset. #dailyreset #somatichealing #groundingpractice", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-63", "title": "Self Love Routine Builder App | Inner Child and Self Worth Journal", "description": "Build a self love routine with inner child care, a self worth journal, and daily habit tracking in one app. No subscription, works on iPhone and Android. Tap to start your self love practice. #selflovejourney #innerchildhealing #selfworth", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-64", "title": "Inner Child Healing Planner App | Guided Journal, Play and Safety Tracker", "description": "A guided journal for inner child healing work, with play and safety tracking built in to support the process. No subscription, no app store. Tap to start your inner child healing work. #innerchildhealing #shadowworkjournal #selfhealing", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-65", "title": "Manifestation Tracker App | Vision Board and Goal Journal", "description": "Track your manifestation practice with a law of attraction planner, a vision board, and a goal journal built into daily rituals. No subscription, works on iPhone and Android. Tap to start manifesting your goals. #manifestation #lawofattraction #visionboard", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-66", "title": "Shadow Work Journal App | Guided Prompts for Inner Healing", "description": "A guided prompt library for shadow work, built to support inner healing and self reflection at your own pace. No subscription, no app store required. Tap to start your shadow work journal. #shadowwork #innerhealing #selfreflection", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-67", "title": "Emotional Reset Planner App | Guided 5 Step Regulation Flow", "description": "A guided five step flow to help you regulate and reset in the moment, built for real anxiety coping, not just journaling after the fact. No subscription, works on iPhone and Android. Tap to try your first reset. #emotionalregulation #anxietycoping #mentalwellness", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-68", "title": "Daily Intuition Journal App | Confidence Compass and Synchronicity Log", "description": "Build trust in your intuition with a daily journal, a confidence compass, and a synchronicity log that reveals weekly patterns. No subscription, no app store. Tap to start your intuition practice. #intuitionjournal #synchronicity #spiritualjournal", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-69", "title": "Moon Ritual Planner App | Real Lunar Phases and Manifestation Journal", "description": "Plan rituals around real lunar phases and keep a manifestation journal tied to the actual moon calendar. No subscription, works on iPhone and Android. Tap to start your moon ritual practice. #moonritual #lunarplanner #manifestationjournal", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-70", "title": "Period Tracker App | Cycle Calendar and Flow Predictions", "description": "Track your cycle with a simple calendar and flow predictions in a private digital menstrual log on your phone. No account, no cloud, your data stays with you. No subscription. Tap to start tracking your cycle. #periodtracker #cycletracking #menstrualhealth", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-71", "title": "Period and Cycle Tracker App | Calendar, Predictions and Symptom Log", "description": "A fuller cycle tracker with predictions, symptom logging, and a private digital record that stays on your device. No subscription, no account required. Tap to start tracking your cycle today. #cycletracking #periodapp #menstrualhealth", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-72", "title": "Period Tracker App | PIN Protected Cycle, Fertility and BBT Charts", "description": "A complete, PIN protected cycle tracker with fertility tracking, BBT charts, and weight logs, private and built for trying to conceive. No subscription, no cloud account. Tap to start your fertility tracking. #fertilitytracker #ttcjourney #bbtcharting", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-73", "title": "Fitness Planner App | Workout Timer, Macro Tracker and PR Charts", "description": "Plan workouts, track macros, and log personal records all in one fitness app built for your phone. No subscription, no ads interrupting your set. Tap to start planning your training. #fitnessplanner #macrotracker #workoutapp", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-74", "title": "Vacation Planner App | Travel Budget, Itinerary and Packing List", "description": "Plan a trip budget, build an itinerary, keep a digital trip journal, and check off your packing list, all in one travel app. No subscription, no app store. Tap to start planning your next trip. #travelplanner #vacationplanning #packinglist", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}, {"id": "payhip-seed-75", "title": "Family Chore Dash App | Gamified Chores and Allowance Tracker for Kids", "description": "Turn chores into a game the whole family can play, with a multiplayer chore dash and an allowance tracker tied to savings goals for kids. No subscription, works on iPhone and Android. Tap to start your family's chore game. #choretracker #kidsallowance #familyapp", "tags": "", "link": "https://mobilefirststudio.com", "boards": [], "destination": "payhip", "status": "draft", "lastPostedAt": "1970-01-01T00:00:00.000Z", "timesPosted": 0, "addedAt": "2026-09-20T00:00:00.000Z"}], "boards": [{"id": "budget-finance-planners", "name": "Budget & Finance Planners", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "car-maintenance-log-reminders", "name": "Car Maintenance Log & Reminders", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "chore-chart-allowance-tracker-kids", "name": "Chore Chart & Allowance Tracker (Kids)", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "christmas-budget-gift-savings-planner", "name": "Christmas Budget & Gift Savings Planner", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "digital-baby-care-tools", "name": "Digital Baby Care Tools", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "emotional-wellness-tools", "name": "Emotional Wellness Tools", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "everyday-life-organization", "name": "Everyday Life & Organization", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "life-admin-planners", "name": "Life Admin Planners", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "mind-body-spirit-planners", "name": "Mind, Body & Spirit Planners", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "students-learning", "name": "Students & Learning", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "wedding-planning", "name": "Wedding Planning", "addedAt": "2026-09-13T18:46:14.000Z"}, {"id": "health-cycle-tracking", "name": "Health & Cycle Tracking", "addedAt": "2026-09-13T18:46:14.000Z"}]};
 
   let pins = [];
   let boards = [];
   let today = { date: todayStr(), pinIds: [] };
   let selectedNewPinBoards = new Set();
   let selectedNewPinDestination = "etsy";
+  let selectedNewPinStatus = "live";
 
   function todayStr(){ return new Date().toISOString().slice(0,10); }
   function escapeHtml(s){
@@ -499,25 +549,51 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
   }
   function destOf(p){ return p && p.destination === "payhip" ? "payhip" : "etsy"; }
   function destLabel(d){ return d === "payhip" ? "Payhip" : "Etsy"; }
+  function statusOf(p){ return p && p.status === "draft" ? "draft" : "live"; }
+  function statusLabel(s){ return s === "draft" ? "Not pinned" : "Pinned"; }
 
   document.getElementById("todayLabel").textContent = new Date().toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
 
   // ---------- local storage persistence ----------
+  function migratePin(p){
+    if (!p.status){
+      p.status = (typeof p.id === "string" && p.id.indexOf("payhip-seed-") === 0) ? "draft" : (p.timesPosted ? "live" : (p.link ? "live" : "draft"));
+    }
+    if (typeof p.description !== "string") p.description = "";
+    if (typeof p.tags !== "string") p.tags = "";
+    return p;
+  }
+
   function loadStore(){
     let raw = null;
     try{ raw = localStorage.getItem(STORAGE_KEY); } catch(e){ raw = null; }
     if (raw){
       try{
         const parsed = JSON.parse(raw);
-        pins = parsed.pins || [];
+        pins = (parsed.pins || []).map(migratePin);
         boards = parsed.boards || [];
         const t = todayStr();
         today = (parsed.today && parsed.today.date === t) ? parsed.today : { date: t, pinIds: [] };
         return;
       } catch(e){ /* fall through to seed */ }
     }
+    // check for older version's data to carry forward
+    let oldRaw = null;
+    try{ oldRaw = localStorage.getItem(OLD_STORAGE_KEY); } catch(e){ oldRaw = null; }
+    if (oldRaw){
+      try{
+        const parsedOld = JSON.parse(oldRaw);
+        if (parsedOld.pins && parsedOld.pins.length){
+          pins = parsedOld.pins.map(migratePin);
+          boards = parsedOld.boards || [];
+          today = { date: todayStr(), pinIds: [] };
+          persist();
+          return;
+        }
+      } catch(e){ /* ignore */ }
+    }
     // first run: seed with real data
-    pins = SEED_DATA.pins.slice();
+    pins = SEED_DATA.pins.slice().map(migratePin);
     boards = SEED_DATA.boards.slice();
     today = { date: todayStr(), pinIds: [] };
     persist();
@@ -543,22 +619,77 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
 
   function renderAll(){
     renderStats();
+    renderToCreate();
     renderQueue();
     renderBoardPicker();
     renderNewPinDestPicker();
+    renderNewPinStatusPicker();
     renderPinsTable();
     renderBoardsSection();
   }
 
   function renderStats(){
-    document.getElementById("statPins").textContent = pins.length;
+    const draftCount = pins.filter(function(p){ return statusOf(p) === "draft"; }).length;
+    const liveCount = pins.filter(function(p){ return statusOf(p) === "live"; }).length;
+    document.getElementById("statDraft").textContent = draftCount;
+    document.getElementById("statLive").textContent = liveCount;
     document.getElementById("statBoards").textContent = boards.length;
     document.getElementById("statPostedToday").textContent = today.pinIds.filter(function(id){ return pins.some(function(p){ return p.id === id; }); }).length;
-    document.getElementById("statNeverPosted").textContent = pins.filter(function(p){ return !p.timesPosted; }).length;
   }
 
+  // ---------- To create (draft) ----------
+  function renderToCreate(){
+    const term = (document.getElementById("toCreateSearch").value || "").toLowerCase();
+    const destFilter = document.getElementById("toCreateDestFilter").value;
+    let drafts = pins.filter(function(p){ return statusOf(p) === "draft"; });
+    drafts = drafts.filter(function(p){
+      const matchesTerm = (p.title || "").toLowerCase().indexOf(term) !== -1;
+      const matchesDest = destFilter === "all" || destOf(p) === destFilter;
+      return matchesTerm && matchesDest;
+    });
+    drafts.sort(function(a,b){ return (a.title||"").localeCompare(b.title||""); });
+
+    document.getElementById("toCreateSub").textContent = drafts.length + " left to pin \u2014 title and description are ready, add a picture, tags, and a board, then mark it pinned.";
+    const grid = document.getElementById("toCreateGrid");
+    const emptyNote = document.getElementById("toCreateEmpty");
+    if (drafts.length === 0){
+      grid.innerHTML = "";
+      emptyNote.hidden = false;
+      return;
+    }
+    emptyNote.hidden = true;
+    grid.innerHTML = drafts.map(function(p){
+      const dest = destOf(p);
+      const destChip = '<span class="chip ' + dest + '">' + destLabel(dest) + "</span>";
+      return (
+        '<div class="pin-card">' +
+          '<div class="title">' + escapeHtml(p.title) + "</div>" +
+          '<div class="boards">' + destChip + "</div>" +
+          (p.description ? (
+            '<div class="desc-label-row"><span class="lbl">Description</span><button type="button" class="ghost small" data-copy-desc="' + escapeHtml(p.id) + '">Copy</button></div>' +
+            '<div class="desc-box">' + escapeHtml(p.description) + "</div>"
+          ) : "") +
+          '<div class="tags-row"><label style="margin-bottom:0;">Tags</label><input type="text" class="tags-input" data-tags-for="' + escapeHtml(p.id) + '" value="' + escapeHtml(p.tags || "") + '" placeholder="add keywords\u2026"></div>' +
+          '<div class="field"><label style="margin-bottom:0;">Board</label><div class="board-picker" data-board-picker-for="' + escapeHtml(p.id) + '">' + boardPickerHtml(p) + '</div></div>' +
+          '<div class="actions"><button class="primary" data-mark-pinned="' + escapeHtml(p.id) + '">Mark pinned</button></div>' +
+        "</div>"
+      );
+    }).join("");
+  }
+
+  function boardPickerHtml(p){
+    if (boards.length === 0) return '<span class="hint">No boards yet.</span>';
+    const current = p.boards || [];
+    return boards.map(function(b){
+      const on = current.indexOf(b.name) !== -1;
+      return '<button type="button" class="board-toggle' + (on ? " on" : "") + '" data-pin-board-toggle="' + escapeHtml(p.id) + '" data-board-name="' + escapeHtml(b.name) + '">' + escapeHtml(b.name) + "</button>";
+    }).join("");
+  }
+
+  // ---------- Today's re-save queue (live pins only) ----------
   function computeQueue(){
-    const remaining = pins.filter(function(p){ return today.pinIds.indexOf(p.id) === -1; });
+    const livePins = pins.filter(function(p){ return statusOf(p) === "live"; });
+    const remaining = livePins.filter(function(p){ return today.pinIds.indexOf(p.id) === -1; });
     const sorted = remaining.slice().sort(function(a,b){
       return (a.lastPostedAt || EPOCH).localeCompare(b.lastPostedAt || EPOCH);
     });
@@ -602,9 +733,21 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
     const now = new Date().toISOString();
     pin.lastPostedAt = now;
     pin.timesPosted = (pin.timesPosted || 0) + 1;
+    pin.status = "live";
     const t = todayStr();
     if (today.date !== t) today = { date: t, pinIds: [] };
     if (today.pinIds.indexOf(id) === -1) today.pinIds.push(id);
+    persist();
+    renderAll();
+  }
+
+  function markPinnedFromDraft(id){
+    const pin = pins.find(function(p){ return p.id === id; });
+    if (!pin) return;
+    const now = new Date().toISOString();
+    pin.status = "live";
+    pin.lastPostedAt = now;
+    pin.timesPosted = (pin.timesPosted || 0) + 1;
     persist();
     renderAll();
   }
@@ -630,6 +773,15 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
     }).join("");
   }
 
+  function renderNewPinStatusPicker(){
+    const wrap = document.getElementById("newPinStatusPicker");
+    if (!wrap) return;
+    wrap.innerHTML = [["live","Yes, already pinned"],["draft","Not yet"]].map(function(pair){
+      const on = selectedNewPinStatus === pair[0];
+      return '<button type="button" class="dest-toggle' + (on ? " on " + pair[0] : "") + '" data-status-toggle="' + pair[0] + '">' + pair[1] + "</button>";
+    }).join("");
+  }
+
   function ensureBoard(name){
     const clean = name.trim();
     if (!clean) return;
@@ -639,18 +791,22 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
     }
   }
 
-  function addPin(title, link, boardNames, destination){
+  function addPin(title, link, boardNames, destination, description, tags, status){
     if (!title.trim()) return;
     const clean = boardNames.map(function(b){ return b.trim(); }).filter(Boolean);
     clean.forEach(ensureBoard);
+    const st = status === "draft" ? "draft" : "live";
     pins.push({
       id: uid(),
       title: title.trim(),
-      link: link.trim(),
+      description: (description || "").trim(),
+      tags: (tags || "").trim(),
+      link: (link || "").trim(),
       boards: clean,
       destination: destination === "payhip" ? "payhip" : "etsy",
-      lastPostedAt: EPOCH,
-      timesPosted: 0,
+      status: st,
+      lastPostedAt: st === "live" ? new Date().toISOString() : EPOCH,
+      timesPosted: st === "live" ? 1 : 0,
       addedAt: new Date().toISOString(),
     });
   }
@@ -659,11 +815,13 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
     const term = (document.getElementById("searchInput").value || "").toLowerCase();
     const sortMode = document.getElementById("sortSelect").value;
     const destFilter = document.getElementById("destFilterSelect").value;
+    const statusFilter = document.getElementById("statusFilterSelect").value;
     let rows = pins.filter(function(p){
       const hay = (p.title + " " + (p.boards || []).join(" ")).toLowerCase();
       const matchesTerm = hay.indexOf(term) !== -1;
       const matchesDest = destFilter === "all" || destOf(p) === destFilter;
-      return matchesTerm && matchesDest;
+      const matchesStatus = statusFilter === "all" || statusOf(p) === statusFilter;
+      return matchesTerm && matchesDest && matchesStatus;
     });
     rows = rows.slice().sort(function(a,b){
       if (sortMode === "az") return (a.title||"").localeCompare(b.title||"");
@@ -673,7 +831,8 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
 
     const etsyCount = pins.filter(function(p){ return destOf(p) === "etsy"; }).length;
     const payhipCount = pins.filter(function(p){ return destOf(p) === "payhip"; }).length;
-    document.getElementById("allPinsCount").textContent = pins.length + " total \u00b7 " + etsyCount + " Etsy \u00b7 " + payhipCount + " Payhip";
+    const draftCount = pins.filter(function(p){ return statusOf(p) === "draft"; }).length;
+    document.getElementById("allPinsCount").textContent = pins.length + " total \u00b7 " + etsyCount + " Etsy \u00b7 " + payhipCount + " Payhip \u00b7 " + draftCount + " not pinned yet";
     const body = document.getElementById("pinsTableBody");
     document.getElementById("pinsTableEmpty").hidden = pins.length !== 0;
 
@@ -683,13 +842,18 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
       if (p.timesPosted){ dotClass = (days !== null && days >= 14) ? "due" : "fresh"; }
       const boardChips = (p.boards || []).map(function(b){ return '<span class="chip">' + escapeHtml(b) + "</span>"; }).join(" ") || '<span class="chip muted">none</span>';
       const linkLine = p.link ? '<div class="link-line"><a href="' + escapeHtml(p.link) + '" target="_blank" rel="noopener">view</a></div>' : "";
+      const descLine = p.description ? '<div class="desc-line" title="' + escapeHtml(p.description) + '">' + escapeHtml(p.description.slice(0, 70)) + (p.description.length > 70 ? "\u2026" : "") + '</div>' : "";
       const dest = destOf(p);
       const destBtn = '<button type="button" class="chip clickable ' + dest + '" data-toggle-dest="' + escapeHtml(p.id) + '" title="Click to switch to ' + destLabel(dest === "payhip" ? "etsy" : "payhip") + '">' + destLabel(dest) + "</button>";
+      const status = statusOf(p);
+      const statusBtn = '<button type="button" class="chip clickable ' + status + '" data-toggle-status="' + escapeHtml(p.id) + '" title="Click to switch to ' + statusLabel(status === "draft" ? "live" : "draft") + '">' + statusLabel(status) + "</button>";
       return (
         "<tr>" +
-          '<td class="title-cell">' + escapeHtml(p.title) + linkLine + "</td>" +
+          '<td class="title-cell">' + escapeHtml(p.title) + linkLine + descLine + "</td>" +
+          "<td>" + statusBtn + "</td>" +
           "<td>" + boardChips + "</td>" +
           "<td>" + destBtn + "</td>" +
+          '<td><input type="text" class="tags-input" data-table-tags-for="' + escapeHtml(p.id) + '" value="' + escapeHtml(p.tags || "") + '" placeholder="tags\u2026"></td>' +
           '<td class="num">' + (p.timesPosted || 0) + "</td>" +
           "<td><span class=\"status-dot " + dotClass + "\"></span>" + fmtLastPosted(p.lastPostedAt) + "</td>" +
           '<td><button class="ghost danger" data-delete-pin="' + escapeHtml(p.id) + '">Delete</button></td>' +
@@ -710,12 +874,17 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
     document.getElementById("addPinBtn").addEventListener("click", function(){
       const title = document.getElementById("newPinTitle").value;
       const link = document.getElementById("newPinLink").value;
+      const description = document.getElementById("newPinDesc").value;
+      const tags = document.getElementById("newPinTags").value;
       if (!title.trim()) return;
-      addPin(title, link, Array.from(selectedNewPinBoards), selectedNewPinDestination);
+      addPin(title, link, Array.from(selectedNewPinBoards), selectedNewPinDestination, description, tags, selectedNewPinStatus);
       document.getElementById("newPinTitle").value = "";
       document.getElementById("newPinLink").value = "";
+      document.getElementById("newPinDesc").value = "";
+      document.getElementById("newPinTags").value = "";
       selectedNewPinBoards = new Set();
       selectedNewPinDestination = "etsy";
+      selectedNewPinStatus = "live";
       persist();
       renderAll();
     });
@@ -734,6 +903,13 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
       if (!btn) return;
       selectedNewPinDestination = btn.getAttribute("data-dest-toggle");
       renderNewPinDestPicker();
+    });
+
+    document.getElementById("newPinStatusPicker").addEventListener("click", function(e){
+      const btn = e.target.closest("[data-status-toggle]");
+      if (!btn) return;
+      selectedNewPinStatus = btn.getAttribute("data-status-toggle");
+      renderNewPinStatusPicker();
     });
 
     document.getElementById("bulkBoardsBtn").addEventListener("click", function(){
@@ -755,7 +931,11 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
         const boardNames = parts[2] ? parts[2].split(";").map(function(s){ return s.trim(); }).filter(Boolean) : [];
         const destRaw = (parts[3] || "").toLowerCase();
         const destination = destRaw.indexOf("payhip") !== -1 ? "payhip" : "etsy";
-        if (title) addPin(title, link, boardNames, destination);
+        const description = parts[4] || "";
+        const tags = parts[5] || "";
+        const statusRaw = (parts[6] || "").toLowerCase();
+        const status = statusRaw.indexOf("draft") !== -1 ? "draft" : "live";
+        if (title) addPin(title, link, boardNames, destination, description, tags, status);
       });
       ta.value = "";
       persist();
@@ -769,6 +949,51 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
       markPosted(btn.getAttribute("data-mark"));
     });
 
+    document.getElementById("toCreateGrid").addEventListener("click", function(e){
+      const copyBtn = e.target.closest("[data-copy-desc]");
+      if (copyBtn){
+        const id = copyBtn.getAttribute("data-copy-desc");
+        const pin = pins.find(function(p){ return p.id === id; });
+        if (pin && navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(pin.description).then(function(){
+            copyBtn.textContent = "Copied!";
+            setTimeout(function(){ copyBtn.textContent = "Copy"; }, 1500);
+          }).catch(function(){});
+        }
+        return;
+      }
+      const boardBtn = e.target.closest("[data-pin-board-toggle]");
+      if (boardBtn){
+        const id = boardBtn.getAttribute("data-pin-board-toggle");
+        const boardName = boardBtn.getAttribute("data-board-name");
+        const pin = pins.find(function(p){ return p.id === id; });
+        if (!pin) return;
+        pin.boards = pin.boards || [];
+        const idx = pin.boards.indexOf(boardName);
+        if (idx === -1) pin.boards.push(boardName); else pin.boards.splice(idx, 1);
+        persist();
+        renderToCreate();
+        return;
+      }
+      const markBtn = e.target.closest("[data-mark-pinned]");
+      if (markBtn){
+        markPinnedFromDraft(markBtn.getAttribute("data-mark-pinned"));
+      }
+    });
+
+    document.getElementById("toCreateGrid").addEventListener("change", function(e){
+      const tagsInput = e.target.closest("[data-tags-for]");
+      if (!tagsInput) return;
+      const id = tagsInput.getAttribute("data-tags-for");
+      const pin = pins.find(function(p){ return p.id === id; });
+      if (!pin) return;
+      pin.tags = tagsInput.value;
+      persist();
+    });
+
+    document.getElementById("toCreateSearch").addEventListener("input", renderToCreate);
+    document.getElementById("toCreateDestFilter").addEventListener("change", renderToCreate);
+
     document.getElementById("pinsTableBody").addEventListener("click", function(e){
       const destBtn = e.target.closest("[data-toggle-dest]");
       if (destBtn){
@@ -778,7 +1003,16 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
         pin.destination = destOf(pin) === "payhip" ? "etsy" : "payhip";
         persist();
         renderPinsTable();
-        renderStats();
+        return;
+      }
+      const statusBtn = e.target.closest("[data-toggle-status]");
+      if (statusBtn){
+        const id = statusBtn.getAttribute("data-toggle-status");
+        const pin = pins.find(function(p){ return p.id === id; });
+        if (!pin) return;
+        pin.status = statusOf(pin) === "draft" ? "live" : "draft";
+        persist();
+        renderAll();
         return;
       }
       const btn = e.target.closest("[data-delete-pin]");
@@ -795,6 +1029,16 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
       renderAll();
     });
 
+    document.getElementById("pinsTableBody").addEventListener("change", function(e){
+      const tagsInput = e.target.closest("[data-table-tags-for]");
+      if (!tagsInput) return;
+      const id = tagsInput.getAttribute("data-table-tags-for");
+      const pin = pins.find(function(p){ return p.id === id; });
+      if (!pin) return;
+      pin.tags = tagsInput.value;
+      persist();
+    });
+
     document.getElementById("boardChipRow").addEventListener("click", function(e){
       const btn = e.target.closest("[data-delete-board]");
       if (!btn) return;
@@ -807,6 +1051,7 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
     document.getElementById("searchInput").addEventListener("input", renderPinsTable);
     document.getElementById("sortSelect").addEventListener("change", renderPinsTable);
     document.getElementById("destFilterSelect").addEventListener("change", renderPinsTable);
+    document.getElementById("statusFilterSelect").addEventListener("change", renderPinsTable);
 
     document.getElementById("exportBtn").addEventListener("click", function(){
       const payload = JSON.stringify({ pins: pins, boards: boards, today: today, exportedAt: new Date().toISOString() }, null, 2);
@@ -834,7 +1079,7 @@ Another Pin Title | https://www.pinterest.com/pin/123456789/ | Board A | payhip"
         try{
           const parsed = JSON.parse(String(reader.result));
           if (!parsed || !Array.isArray(parsed.pins)) throw new Error("bad file");
-          pins = parsed.pins;
+          pins = parsed.pins.map(migratePin);
           boards = parsed.boards || [];
           today = { date: todayStr(), pinIds: [] };
           persist();
